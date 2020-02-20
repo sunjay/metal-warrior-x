@@ -28,7 +28,7 @@
                         1,
                         1
                     ],
-                    "intensity" : 3,
+                    "intensity" : 1000,
                     "type" : "directional",
                     "name" : "light_N"
                 },
@@ -38,7 +38,7 @@
                         1,
                         1
                     ],
-                    "intensity" : 3,
+                    "intensity" : 1000,
                     "type" : "directional",
                     "name" : "light_NE"
                 },
@@ -48,7 +48,7 @@
                         1,
                         1
                     ],
-                    "intensity" : 3,
+                    "intensity" : 1000,
                     "type" : "directional",
                     "name" : "light_E"
                 },
@@ -58,7 +58,7 @@
                         1,
                         1
                     ],
-                    "intensity" : 3,
+                    "intensity" : 1000,
                     "type" : "directional",
                     "name" : "light_SE"
                 },
@@ -68,7 +68,7 @@
                         1,
                         1
                     ],
-                    "intensity" : 3,
+                    "intensity" : 1000,
                     "type" : "directional",
                     "name" : "light_S"
                 },
@@ -78,7 +78,7 @@
                         1,
                         1
                     ],
-                    "intensity" : 3,
+                    "intensity" : 1000,
                     "type" : "directional",
                     "name" : "light_SW"
                 },
@@ -88,7 +88,7 @@
                         1,
                         1
                     ],
-                    "intensity" : 3,
+                    "intensity" : 1000,
                     "type" : "directional",
                     "name" : "light_W"
                 },
@@ -98,7 +98,7 @@
                         1,
                         1
                     ],
-                    "intensity" : 3,
+                    "intensity" : 1000,
                     "type" : "directional",
                     "name" : "light_NW"
                 }
