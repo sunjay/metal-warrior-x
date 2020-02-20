@@ -1,14 +1,12 @@
-[workspace]
-members = [
-    "assets/spritesheets",
-]
-
 [package]
-name = "metal-warrior-x"
+name = "spritesheets"
 version = "0.1.0"
 authors = ["Sunjay Varma <varma.sunjay@gmail.com>"]
 edition = "2018"
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+spritec = { path = "../../../spritec" }
+anyhow = "1.0"
