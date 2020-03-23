@@ -65,8 +65,8 @@ fn main() -> Result<(), anyhow::Error> {
     let job = RenderJob {
         scale: nz32(4),
         root: RenderNode::Layout(RenderLayout::Grid(GridLayout {
-            rows: nz32(8),
-            cols: nz32(8),
+            rows: nz32(CAMERAS_LIGHTS.len() as u32),
+            cols: nz32(WALK_FRAMES as u32),
             cell_size: PLAYER_SIZE,
             cells,
         })),
