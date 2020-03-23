@@ -97,13 +97,13 @@ fn generate_player_sprites(
                 geometry: FileQuery {
                     query: GeometryQuery {
                         models: GeometryFilter::all_in_default_scene(),
-                        animation: None,/*Some(AnimationQuery {
+                        animation: Some(AnimationQuery {
                             name: None,
                             position: AnimationPosition::RelativeTime {
                                 start_time: Milliseconds::from_msec(0.0),
                                 weight: i as f32 / WALK_FRAMES as f32,
                             },
-                        }),*/
+                        }),
                     },
 
                     file: player_file.clone(),
