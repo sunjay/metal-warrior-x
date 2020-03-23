@@ -9,13 +9,15 @@ use std::sync::{Arc, Mutex};
 use std::num::NonZeroU32;
 
 use spritec::tasks::WeakFileCache;
-use spritec::math::{Rgb, Rgba};
+use spritec::math::{Rgb, Rgba, Milliseconds};
 use spritec::query3d::{
     File,
     CameraQuery,
     LightQuery,
     GeometryQuery,
     GeometryFilter,
+    AnimationQuery,
+    AnimationPosition,
 };
 use spritec::renderer::{
     FileQuery,
@@ -23,7 +25,8 @@ use spritec::renderer::{
     RenderJob,
     RenderNode,
     RenderLayout,
-    LayoutType,
+    GridLayout,
+    GridLayoutCell,
     Size,
     RenderedImage,
     Outline,
@@ -33,15 +36,14 @@ use spritec::renderer::{
 
 /// It is undefined behaviour to pass zero to this function
 const fn nz32(size: u32) -> NonZeroU32 {
-    unsafe {
-        NonZeroU32::new_unchecked(size)
-    }
+    unsafe { NonZeroU32::new_unchecked(size) }
 }
 
 const PLAYER_SIZE: Size = Size {
     width: nz32(32),
     height: nz32(32),
 };
+const WALK_FRAMES: usize = 8;
 
 static CAMERAS_LIGHTS: &[(&str, &str)] = &[
     ("camera_N", "light_N"),
@@ -57,17 +59,17 @@ static CAMERAS_LIGHTS: &[(&str, &str)] = &[
 fn main() -> Result<(), anyhow::Error> {
     let mut file_cache = WeakFileCache::default();
 
-    let mut nodes = Vec::new();
-    generate_player_sprites(&mut nodes, &mut file_cache)?;
+    let mut cells = Vec::new();
+    generate_player_sprites(&mut cells, &mut file_cache)?;
 
     let job = RenderJob {
         scale: nz32(4),
-        root: RenderNode::Layout(RenderLayout {
-            nodes,
-            layout: LayoutType::Grid {
-                cols: NonZeroU32::new(1).unwrap(),
-            },
-        }),
+        root: RenderNode::Layout(RenderLayout::Grid(GridLayout {
+            rows: nz32(8),
+            cols: nz32(8),
+            cell_size: PLAYER_SIZE,
+            cells,
+        })),
     };
 
     let mut ctx = ThreadRenderContext::new()?;
@@ -78,29 +80,39 @@ fn main() -> Result<(), anyhow::Error> {
 }
 
 fn generate_player_sprites(
-    nodes: &mut Vec<RenderNode>,
+    cells: &mut Vec<Vec<GridLayoutCell>>,
     file_cache: &mut WeakFileCache,
 ) -> Result<(), anyhow::Error> {
     let player_file = file_cache.open_gltf(Path::new("assets/gltf/player.gltf"))?;
 
     for (camera, lights) in cameras_lights(&player_file) {
-        nodes.push(RenderNode::RenderedImage(RenderedImage {
-            size: PLAYER_SIZE,
-            background: Rgba {r: 0.0, g: 0.0, b: 0.0, a: 0.0},
-            camera,
-            lights,
-            ambient_light: Rgb::white() * 0.4,
-            geometry: FileQuery {
-                query: GeometryQuery {
-                    models: GeometryFilter::all_in_default_scene(),
-                    animation: None,
+        let mut row = Vec::new();
+        for i in 0..WALK_FRAMES {
+            row.push(GridLayoutCell::single(RenderNode::RenderedImage(RenderedImage {
+                size: PLAYER_SIZE,
+                background: Rgba {r: 0.0, g: 0.0, b: 0.0, a: 0.0},
+                camera: camera.clone(),
+                lights: lights.clone(),
+                ambient_light: Rgb::white() * 0.4,
+                geometry: FileQuery {
+                    query: GeometryQuery {
+                        models: GeometryFilter::all_in_default_scene(),
+                        animation: None,/*Some(AnimationQuery {
+                            name: None,
+                            position: AnimationPosition::RelativeTime {
+                                start_time: Milliseconds::from_msec(0.0),
+                                weight: i as f32 / WALK_FRAMES as f32,
+                            },
+                        }),*/
+                    },
+
+                    file: player_file.clone(),
                 },
 
-                file: player_file.clone(),
-            },
-
-            outline: Outline {color: Rgba::black(), thickness: 0.0},
-        }));
+                outline: Outline {color: Rgba::black(), thickness: 0.0},
+            })));
+        }
+        cells.push(row);
     }
 
     Ok(())
